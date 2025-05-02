@@ -28,16 +28,9 @@ This led to the creation of [Tool-Unified UI](https://github.com/AI-QL/tuui),  a
 
 ## Architecture
 
-Adopted a straightforward architecture consistent with the MCP documentation to facilitate a clear understanding of MCP principles.
+Adopted a straightforward architecture consistent with the MCP documentation to facilitate a clear understanding of MCP principles by:
 
-```mermaid
-erDiagram
-    Renderer ||--o{ APP : IPC
-    APP ||--|{ Client : contains
-    Client }|..|{ Server : Stdio
-```
-
-Only three key files need to be understood: `main.ts`, `client.ts`, and `preload.ts`, to grasp the essence of the project.
+[DeepWiki](https://deepwiki.com/AI-QL/chat-mcp)
 
 ## How to use
 
