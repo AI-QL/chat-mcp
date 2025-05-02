@@ -63,8 +63,8 @@ async function initClient(): Promise<ClientObj[]> {
 
           const timeoutPromise = new Promise<Client>((resolve, reject) => {
             setTimeout(() => {
-              reject(new Error(`Initialization of client for ${name} timed out after 10 seconds`));
-            }, 10000); // 10 seconds
+              reject(new Error(`Initialization of client for ${name} timed out after 30 seconds`));
+            }, 30000); // 30 seconds
           });
 
           const client = await Promise.race([

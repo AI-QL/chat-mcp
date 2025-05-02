@@ -560,9 +560,6 @@
                                         <span v-if="expanded">{{ $t('$vuetify.dataIterator.i.advanced') }}</span>
                                         <span v-else>
                                             <v-chip label color="primary" class="ma-1">
-                                                {{ chatbotStore.method }}
-                                            </v-chip>
-                                            <v-chip label color="primary" class="ma-1">
                                                 {{ chatbotStore.stream ? "Stream" : "Stream: off" }}
                                             </v-chip>
                                             <v-chip label color="primary" class="ma-1">
@@ -594,20 +591,19 @@
                                 </v-expansion-panel-title>
 
                                 <v-expansion-panel-text>
-                                    <v-row class="px-2 mr-2">
-                                        <v-col>
-                                            <v-combobox density='compact' :label="$t('$vuetify.dataIterator.i.method')"
-                                                v-model="chatbotStore.method" variant="outlined">
-                                            </v-combobox>
-                                        </v-col>
+                                    <v-row class="px-3 mr-2">
+                                        <v-checkbox v-model="chatbotStore.thinking" true-icon='$checkboxIndeterminate'
+                                            :label="$t('$vuetify.dataIterator.i.thinking')" color="error">
+                                        </v-checkbox>
                                         <v-checkbox v-model="chatbotStore.stream"
                                             :label="$t('$vuetify.dataIterator.i.stream')" color="primary">
                                         </v-checkbox>
-                                        <v-checkbox v-model="chatbotStore.mcp"
+                                        <v-checkbox v-if="mcpStore.getServers" v-model="chatbotStore.mcp"
                                             :label="$t('$vuetify.dataIterator.i.mcp')" color="primary">
                                         </v-checkbox>
                                     </v-row>
-                                    <v-row class="px-3 mt-0 mb-0">
+                                    <v-divider></v-divider>
+                                    <v-row class="px-3 mt-6 mb-0">
                                         <v-combobox class="px-2" density='compact'
                                             :label="$t('$vuetify.dataIterator.i.maxTokensPrefix')"
                                             :items="defaultChoiceStore.max_tokens_type"
@@ -1978,6 +1974,7 @@
                         top_p: "",
                         method: "POST",
                         stream: true,
+                        thinking: true,
                         mcp: false
                     }),
 
@@ -2039,6 +2036,10 @@
 
                         if (chatbotStore.max_tokens_value) {
                             body[chatbotStore.max_tokens_type] = parseInt(chatbotStore.max_tokens_value)
+                        }
+
+                        if (chatbotStore.thinking === true) {
+                            body['enable_thinking'] = false
                         }
 
                         if (chatbotStore.temperature) {
@@ -2459,6 +2460,7 @@
                         i: {
                             title: 'Interface Configuration',
                             apikey: 'API Key',
+                            thinking: 'Thinking',
                             endpoint: 'Endpoint',
                             url: 'URL',
                             path: 'Path',
@@ -2598,6 +2600,7 @@
                             title: '接口配置',
                             apikey: 'API 密钥',
                             endpoint: '端口',
+                            thinking: '思考模式',
                             url: '网址',
                             path: '路径',
                             model: '模型',
