@@ -11,7 +11,13 @@ This project originated as a modified version of Chat-UI, initially adopting a m
 
 Through iterative updates to MCP, I received community feedback advocating for a completely new architecture - one that eliminates third-party CDN dependencies and establishes clearer modular structure to better support derivative development and debugging workflows. 
 
-This led to the creation of [Tool-Unified UI](https://github.com/AI-QL/tuui),  a restructured desktop application optimized for AI-powered development. Building upon the original foundation, TUUI serves as a practical AI-assisted development paradigm, if you're interested, you can also leverage AI to develop new features for TUUI. The platform employs a strict linting and formatting system to ensure AI-generated code adheres to coding standards.. 
+This led to the creation of [Tool Unitary User Interface](https://github.com/AI-QL/tuui),  a restructured desktop application optimized for AI-powered development. Building upon the original foundation, TUUI serves as a practical AI-assisted development paradigm, if you're interested, you can also leverage AI to develop new features for TUUI. The platform employs a strict linting and formatting system to ensure AI-generated code adheres to coding standards.
+
+> **📢 Update: June 2025**  
+> The current project refactoring has been largely completed, and a pre-release version is now available. Please refer to the following documentation for details:
+> - [TUUI GitHub Repository](https://github.com/AI-QL/tuui)
+> - [TUUI Architecture](https://deepwiki.com/AI-QL/tuui)
+> - [TUUI Official Website](https://www.tuui.com/)
 
 ## Features
 
