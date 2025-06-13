@@ -592,9 +592,17 @@
 
                                 <v-expansion-panel-text>
                                     <v-row class="px-3 mr-2">
-                                        <v-checkbox v-model="chatbotStore.thinking" true-icon='$checkboxIndeterminate'
-                                            :label="$t('$vuetify.dataIterator.i.thinking')" color="error">
-                                        </v-checkbox>
+                                        <div class="ml-3 mt-3">
+                                            <span class="mr-2">{{ $t('$vuetify.dataIterator.i.reasoning') }}</span>
+                                            <v-btn-toggle color="primary" v-model="chatbotStore.reasoning_effort" divided variant="outlined"
+                                                density="compact">
+                                                <v-btn>none</v-btn>
+                                                <v-btn>low</v-btn>
+                                                <v-btn>Med</v-btn>
+                                                <v-btn>high</v-btn>
+                                            </v-btn-toggle>
+                                        </div>
+                                        <v-spacer></v-spacer>
                                         <v-checkbox v-model="chatbotStore.stream"
                                             :label="$t('$vuetify.dataIterator.i.stream')" color="primary">
                                         </v-checkbox>
@@ -1938,7 +1946,8 @@
                             "/v1/openai/chat/completions",
                             "/openai/v1/chat/completions"],
                         model: [
-                            "meta-llama/Llama-3.3-70B-Instruct",
+                            "Qwen/Qwen3-32B",
+                            "Qwen/Qwen3-30B-A3B"
                         ],
                         authPrefix: ["Bearer", "Base", "Token"],
                         max_tokens_type: ["max_tokens", "max_completion_tokens", "max_new_tokens"],
@@ -1963,9 +1972,9 @@
                 const useChatbotStore = defineStore("chatbotStore", {
                     state: () => ({
                         apiKey: "",
-                        url: "https://ai.aiql.com",
-                        path: "/v1/chat/completions",
-                        model: "meta-llama/Llama-3.3-70B-Instruct",
+                        url: "https://api2.aiql.com",
+                        path: "/chat/completions",
+                        model: "Qwen/Qwen3-32B",
                         authPrefix: "Bearer",
                         contentType: "application/json",
                         max_tokens_type: "max_tokens",
@@ -1975,7 +1984,8 @@
                         method: "POST",
                         stream: true,
                         thinking: true,
-                        mcp: false
+                        reasoning_effort: null,
+                        mcp: true
                     }),
 
                     persist: {
@@ -2038,8 +2048,23 @@
                             body[chatbotStore.max_tokens_type] = parseInt(chatbotStore.max_tokens_value)
                         }
 
-                        if (chatbotStore.thinking === true) {
-                            body['enable_thinking'] = false
+                        if (typeof chatbotStore.reasoning_effort === 'number') {
+                            switch (chatbotStore.reasoning_effort) {
+                                case 0:
+                                    body['reasoning_effort'] = 'none';
+                                    break;
+                                case 1:
+                                    body['reasoning_effort'] = 'low';
+                                    break;
+                                case 2:
+                                    body['reasoning_effort'] = 'medium';
+                                    break;
+                                case 3:
+                                    body['reasoning_effort'] = 'high';
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
 
                         if (chatbotStore.temperature) {
@@ -2198,11 +2223,14 @@
                     if (choice) {
                         if (target.role == 'assistant') {
                             if (typeof choice === 'string') {
-                                target.content += choice
-                            } else if (typeof choice.content === 'string') {
-                                target.content += choice.content
-                            } else if (typeof choice.reasoning_content === 'string') {
-                                target.reasoning_content += choice.reasoning_content
+                                target.content += choice;
+                            } else {
+                                if (typeof choice.content === 'string') {
+                                    target.content += choice.content;
+                                }
+                                if (typeof choice.reasoning_content === 'string') {
+                                    target.reasoning_content += choice.reasoning_content;
+                                }
                             }
                             parseTool(choice.tool_calls, target)
                         }
@@ -2460,7 +2488,7 @@
                         i: {
                             title: 'Interface Configuration',
                             apikey: 'API Key',
-                            thinking: 'Thinking',
+                            reasoning: 'R-effort',
                             endpoint: 'Endpoint',
                             url: 'URL',
                             path: 'Path',
@@ -2600,7 +2628,7 @@
                             title: '接口配置',
                             apikey: 'API 密钥',
                             endpoint: '端口',
-                            thinking: '思考模式',
+                            reasoning: '推理负荷',
                             url: '网址',
                             path: '路径',
                             model: '模型',
