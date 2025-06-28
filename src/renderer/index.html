@@ -591,27 +591,24 @@
                                 </v-expansion-panel-title>
 
                                 <v-expansion-panel-text>
-                                    <v-row class="px-3 mr-2">
-                                        <div class="ml-3 mt-3">
-                                            <span class="mr-2">{{ $t('$vuetify.dataIterator.i.reasoning') }}</span>
-                                            <v-btn-toggle color="primary" v-model="chatbotStore.reasoning_effort" divided variant="outlined"
-                                                density="compact">
-                                                <v-btn>none</v-btn>
-                                                <v-btn>low</v-btn>
-                                                <v-btn>Med</v-btn>
-                                                <v-btn>high</v-btn>
-                                            </v-btn-toggle>
-                                        </div>
+                                    <v-row class="px-3 mt-2 mr-2">
+
+                                        <v-combobox class="px-2" density='compact'
+                                            :label="$t('$vuetify.dataIterator.i.reasoning')"
+                                            v-model="chatbotStore.reasoning_effort" clearable
+                                            :items="defaultChoiceStore.reasoning_efforts" variant="outlined">
+                                        </v-combobox>
                                         <v-spacer></v-spacer>
                                         <v-checkbox v-model="chatbotStore.stream"
-                                            :label="$t('$vuetify.dataIterator.i.stream')" color="primary">
+                                            :label="$t('$vuetify.dataIterator.i.stream')" density='compact'
+                                            color="primary">
                                         </v-checkbox>
                                         <v-checkbox v-if="mcpStore.getServers" v-model="chatbotStore.mcp"
-                                            :label="$t('$vuetify.dataIterator.i.mcp')" color="primary">
+                                            :label="$t('$vuetify.dataIterator.i.mcp')" density='compact'
+                                            color="primary">
                                         </v-checkbox>
                                     </v-row>
-                                    <v-divider></v-divider>
-                                    <v-row class="px-3 mt-6 mb-0">
+                                    <v-row class="px-3 mt-4 mb-0">
                                         <v-combobox class="px-2" density='compact'
                                             :label="$t('$vuetify.dataIterator.i.maxTokensPrefix')"
                                             :items="defaultChoiceStore.max_tokens_type"
@@ -939,9 +936,9 @@
                                         hide-details rows="1" readonly v-model="group.message.content"></v-textarea>
                                 </v-card-text>
                                 <v-card-text v-else class="md-preview px-4 py-3">
-                                    <md-preview :model-value="group.message.content" 
-                                    :language="language == 'zhHans' ? 'zh-CN' : 'en-US'" :code-foldable="true"
-                                    auto-fold-threshold="Infinity"></md-preview>
+                                    <md-preview :model-value="group.message.content"
+                                        :language="language == 'zhHans' ? 'zh-CN' : 'en-US'" :code-foldable="true"
+                                        auto-fold-threshold="Infinity"></md-preview>
                                 </v-card-text>
                             </template>
                         </tuui-chat-card>
@@ -1789,7 +1786,7 @@
                             if (last.tool_calls.length == 0) {
                                 delete last.tool_calls
                                 return
-                            } 
+                            }
                             if (Object.keys(last.tool_calls[0]).length === 0) {
                                 delete last.tool_calls
                                 return
@@ -1951,6 +1948,7 @@
                         ],
                         authPrefix: ["Bearer", "Base", "Token"],
                         max_tokens_type: ["max_tokens", "max_completion_tokens", "max_new_tokens"],
+                        reasoning_efforts: ['false', 'none', 'low', 'medium', 'high']
                     }),
                     persist: {
                         enabled: true,
@@ -2048,22 +2046,13 @@
                             body[chatbotStore.max_tokens_type] = parseInt(chatbotStore.max_tokens_value)
                         }
 
-                        if (typeof chatbotStore.reasoning_effort === 'number') {
-                            switch (chatbotStore.reasoning_effort) {
-                                case 0:
-                                    body['reasoning_effort'] = 'none';
-                                    break;
-                                case 1:
-                                    body['reasoning_effort'] = 'low';
-                                    break;
-                                case 2:
-                                    body['reasoning_effort'] = 'medium';
-                                    break;
-                                case 3:
-                                    body['reasoning_effort'] = 'high';
-                                    break;
-                                default:
-                                    break;
+                        if (typeof chatbotStore.reasoning_effort === 'string') {
+                            if (chatbotStore.reasoning_effort === 'false') {
+                                // For Python API backends such as extra_body.chat_template_kwargs
+                                body['chat_template_kwargs'] = { enable_thinking: false }
+                            } else {
+                                // For OpenAI OpenAPI backends such as ChatGPT or DeepInfra
+                                body['reasoning_effort'] = chatbotStore.reasoning_effort
                             }
                         }
 
@@ -2488,7 +2477,7 @@
                         i: {
                             title: 'Interface Configuration',
                             apikey: 'API Key',
-                            reasoning: 'R-effort',
+                            reasoning: 'Reasoning Effort',
                             endpoint: 'Endpoint',
                             url: 'URL',
                             path: 'Path',
